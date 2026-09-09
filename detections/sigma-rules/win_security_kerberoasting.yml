@@ -1,0 +1,27 @@
+title: Potential Kerberoasting Activity via Unusual TGS Ticket Request
+id: 5a8a8e52-1f32-4d2c-8b82-b7b51b816223
+status: test
+description: Detects Service Ticket (TGS) requests using legacy RC4 encryption (Ticket Encryption Type 0x17) against non-machine accounts, indicative of Kerberoasting attacks.
+references:
+  - https://attack.mitre.org/techniques/T1558/003/
+author: Active Directory Lab Defense Team
+date: 2026/09/09
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4769
+    TicketOptions: '0x40810000'
+    TicketEncryptionType: '0x17' # RC4-HMAC
+  filter_machine_accounts:
+    ServiceName|endswith: '$'
+  filter_krbtgt:
+    ServiceName: 'krbtgt'
+  condition: selection and not filter_machine_accounts and not filter_krbtgt
+falsepositives:
+  - Legacy applications operating within environments that have not completed RC4 deprecation
+level: high
+tags:
+  - attack.credential_access
+  - attack.t1558.003

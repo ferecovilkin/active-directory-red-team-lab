@@ -1,0 +1,39 @@
+// ==============================================================================
+// Active Directory Threat Hunting Queries (Kusto Query Language - Microsoft Sentinel / MDE)
+// ==============================================================================
+
+// 1. Hunt for Kerberoasting (Event ID 4769 - RC4 Encryption Type 0x17)
+SecurityEvent
+| where TimeGenerated >= ago(24h)
+| where EventID == 4769
+| extend TicketEncryptionType = tostring(EventData.TicketEncryptionType)
+| extend ServiceName = tostring(EventData.ServiceName)
+| extend TargetUserName = tostring(EventData.TargetUserName)
+| extend ClientAddress = tostring(EventData.IpAddress)
+| where TicketEncryptionType == "0x17"
+| where not(ServiceName endswith "$")
+| where ServiceName != "krbtgt"
+| summarize RequestCount = count() by ClientAddress, TargetUserName, ServiceName, bin(TimeGenerated, 1h)
+| order by RequestCount desc
+
+// 2. Hunt for AS-REP Roasting (Event ID 4768 - Pre-Authentication Type 0)
+SecurityEvent
+| where TimeGenerated >= ago(24h)
+| where EventID == 4768
+| extend PreAuthType = tostring(EventData.PreAuthType)
+| extend TargetUserName = tostring(EventData.TargetUserName)
+| extend ClientAddress = tostring(EventData.IpAddress)
+| where PreAuthType == "0" // Pre-authentication disabled
+| where not(TargetUserName endswith "$")
+| project TimeGenerated, TargetUserName, ClientAddress, PreAuthType
+
+// 3. Hunt for Suspicious LSASS Access via Sysmon (Event ID 10)
+Event
+| where Source == "Microsoft-Windows-Sysmon" and EventID == 10
+| extend TargetImage = tostring(parse_xml(EventData).DataItem.EventData.Data[4]["#text"])
+| extend SourceImage = tostring(parse_xml(EventData).DataItem.EventData.Data[1]["#text"])
+| extend GrantedAccess = tostring(parse_xml(EventData).DataItem.EventData.Data[6]["#text"])
+| where TargetImage endswith "lsass.exe"
+| where GrantedAccess in ("0x1010", "0x1038", "0x1410", "0x1fffff")
+| where not(SourceImage endswith "MsMpEng.exe" or SourceImage endswith "svchost.exe")
+| project TimeGenerated, Computer, SourceImage, TargetImage, GrantedAccess

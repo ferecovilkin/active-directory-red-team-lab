@@ -1,0 +1,21 @@
+# Logs and Diagnostics
+*.log
+*.evtx
+*.pcap
+*.pcapng
+
+# Memory dumps and sensitive artifacts
+*.dmp
+*.raw
+*.bin
+
+# Environment / Secret configs
+*.env
+.secrets
+credentials.txt
+
+# OS & Editor specific files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

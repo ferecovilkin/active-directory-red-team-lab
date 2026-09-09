@@ -1,0 +1,33 @@
+title: Suspicious LSASS Process Access for Credential Dumping
+id: 9a3e2187-5c02-4fb8-8120-1b2f7684da10
+status: production
+description: Detects suspicious process access to lsass.exe requesting memory read permissions commonly associated with credential dumping utilities.
+references:
+  - https://attack.mitre.org/techniques/T1003/001/
+author: Active Directory Lab Defense Team
+date: 2026/09/09
+logsource:
+  product: windows
+  service: sysmon
+detection:
+  selection:
+    EventID: 10
+    TargetImage|endswith: '\lsass.exe'
+    GrantedAccess|contains:
+      - '0x1010' # PROCESS_VM_READ | PROCESS_QUERY_LIMITED_INFORMATION
+      - '0x1038'
+      - '0x1410'
+      - '0x1fffff' # PROCESS_ALL_ACCESS
+  filter_legit_processes:
+    SourceImage|endswith:
+      - '\system32\svchost.exe'
+      - '\system32\csrss.exe'
+      - '\system32\wininit.exe'
+      - '\MsMpEng.exe'
+  condition: selection and not filter_legit_processes
+falsepositives:
+  - Endpoint security agents and antivirus software performing memory integrity scans
+level: high
+tags:
+  - attack.credential_access
+  - attack.t1003.001
