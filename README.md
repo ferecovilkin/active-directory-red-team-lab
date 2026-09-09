@@ -151,88 +151,80 @@ Every phase of the intrusion was executed, recorded, and verified within the VMw
 ### 1. Domain Controller Provisioning (`DC01`)
 * **Objective:** Verify active directory domain functional level, DNS resolution, and organizational unit baseline.
 * **Evidence Log:** [`assets/evidence/01_domain_controller.md`](assets/evidence/01_domain_controller.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Domain Controller Provisioning](assets/evidence/01_dc.png)
-  ```
-  *(Active Directory Users & Computers console showing CORP.LOCAL OU tree)*
+
+<p align="center">
+  <img src="assets/evidence/01_dc.png" alt="Domain Controller Provisioning" width="95%">
+</p>
 
 ---
 
 ### 2. Domain Enumeration & Reconnaissance
 * **Objective:** Unprivileged domain discovery from `WKSTN01` identifying SPN attributes and accounts with pre-authentication disabled.
 * **Evidence Log:** [`assets/evidence/02_domain_enumeration.md`](assets/evidence/02_domain_enumeration.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Domain Enumeration](assets/evidence/02_enum.png)
-  ```
-  *(PowerShell console showing discovery of svc_sql SPN and svc_backup DONT_REQ_PREAUTH flag)*
+
+<p align="center">
+  <img src="assets/evidence/02_enum.png" alt="Domain Enumeration" width="95%">
+</p>
 
 ---
 
 ### 3. BloodHound Attack Path Analysis
 * **Objective:** Graph analysis visualizing the shortest path from `jdoe` to `Domain Admins`.
 * **Evidence Log:** [`assets/evidence/03_bloodhound_attack_path.md`](assets/evidence/03_bloodhound_attack_path.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![BloodHound Attack Path](assets/evidence/03_bloodhound.png)
-  ```
-  *(BloodHound UI displaying transitive path: jdoe -> helpdesk_admin -> svc_sql -> APP01 -> Domain Admin)*
+
+<p align="center">
+  <img src="assets/evidence/03_bloodhound.png" alt="BloodHound Attack Path" width="95%">
+</p>
 
 ---
 
 ### 4. Kerberoasting Execution & Ticket Extraction
 * **Objective:** Requesting TGS ticket for `MSSQLSvc/APP01.corp.local:1433` and extracting offline crackable ciphertext.
 * **Evidence Log:** [`assets/evidence/04_kerberoasting.md`](assets/evidence/04_kerberoasting.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Kerberoasting Execution](assets/evidence/04_kerberoast.png)
-  ```
-  *(Terminal capturing TGS ticket request with RC4 cipher and recovered password)*
+
+<p align="center">
+  <img src="assets/evidence/04_kerberoast.png" alt="Kerberoasting Execution" width="95%">
+</p>
 
 ---
 
 ### 5. Lateral Movement to Member Server (`APP01`)
 * **Objective:** Utilizing recovered `svc_sql` credentials to pivot across subnets via Windows Remote Management (WinRM).
 * **Evidence Log:** [`assets/evidence/05_lateral_movement.md`](assets/evidence/05_lateral_movement.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Lateral Movement](assets/evidence/05_lateral.png)
-  ```
-  *(Remote PowerShell interactive session on APP01 at 10.0.10.20)*
+
+<p align="center">
+  <img src="assets/evidence/05_lateral.png" alt="Lateral Movement" width="95%">
+</p>
 
 ---
 
 ### 6. Domain Administrator Takeover via DCSync (`DC01`)
 * **Objective:** Performing Directory Replication Service (MS-DRSR) calls against `DC01` to dump the `krbtgt` password hash and achieve complete forest compromise.
 * **Evidence Log:** [`assets/evidence/06_domain_admin.md`](assets/evidence/06_domain_admin.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Domain Admin Compromise](assets/evidence/06_domain_admin.png)
-  ```
-  *(DCSync output displaying extracted NTLM hashes for krbtgt and Administrator)*
+
+<p align="center">
+  <img src="assets/evidence/06_domain_admin.png" alt="Domain Admin Compromise" width="95%">
+</p>
 
 ---
 
 ### 7. SOC Telemetry & Detection Validation
 * **Objective:** Inspecting Windows Security Event Logs and Sysmon to validate telemetry generation for Event IDs 4768, 4769, 4662, and Sysmon ID 10.
 * **Evidence Log:** [`assets/evidence/07_detection_telemetry.md`](assets/evidence/07_detection_telemetry.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Detection & Telemetry](assets/evidence/07_detection.png)
-  ```
-  *(Splunk dashboard displaying real-time alert triggers for the simulated attack events)*
+
+<p align="center">
+  <img src="assets/evidence/07_detection.png" alt="Detection & Telemetry" width="95%">
+</p>
 
 ---
 
 ### 8. Enterprise Remediation & Hardening
 * **Objective:** Executing the automated audit script [`Audit-ADSecurityBaseline.ps1`](hardening/Audit-ADSecurityBaseline.ps1) to confirm that all vulnerabilities were remediated.
 * **Evidence Log:** [`assets/evidence/08_remediation.md`](assets/evidence/08_remediation.md)
-* **Screenshot Reference:**
-  ```markdown
-  ![Remediation Verification](assets/evidence/08_remediation.png)
-  ```
-  *(PowerShell audit tool showing 0 vulnerabilities following LAPS, gMSA, and Protected Users enforcement)*
+
+<p align="center">
+  <img src="assets/evidence/08_remediation.png" alt="Remediation Verification" width="95%">
+</p>
 
 ---
 
