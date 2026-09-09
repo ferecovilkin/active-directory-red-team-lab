@@ -101,9 +101,9 @@ The laboratory is hosted within an isolated virtual network (**NAT Network / `VM
 
 The lab was built and validated through five distinct tactical phases:
 
-### Mərhələ 1: Active Directory Mühitinin Qurulması (`CORP.LOCAL`)
-* Windows Server 2022 üzərində AD DS rolu qaldırılaraq `CORP.LOCAL` forest root domeni formalaşdırıldı.
-* Korporativ OU strukturu təşkil edildi:
+### Stage 1: Active Directory Domain & Forest Provisioning (`CORP.LOCAL`)
+* Windows Server 2022 was promoted to the primary Domain Controller, establishing the `CORP.LOCAL` forest root.
+* The corporate Organizational Unit (OU) structure was provisioned:
   ```
   CORP.LOCAL
        ├── Domain Admins
@@ -113,19 +113,19 @@ The lab was built and validated through five distinct tactical phases:
        └── Service Accounts
   ```
 
-### Mərhələ 2: Windows Client-in Domenə Qoşulması
-* Windows 11 Enterprise (`WKSTN01`) maşını `DC01` DNS ünvanına yönləndirilərək `CORP.LOCAL` domen mühitinə daxil edildi.
-* Standart istifadəçi `jdoe` yaradılaraq ilkin foothold ssenarisi hazırlandı.
+### Stage 2: Windows Client Domain Onboarding
+* The Windows 11 Enterprise workstation (`WKSTN01`) was configured with `DC01` as its primary DNS server and joined to the `CORP.LOCAL` domain.
+* Standard employee user `jdoe` was provisioned to simulate the initial breach foothold scenario.
 
-### Mərhələ 3: Zəifliklərin Tətbiqi (Vulnerability Seeding)
-* **Kerberoasting Zəifliyi:** `svc_sql` istifadəçi hesabına `MSSQLSvc/APP01.corp.local:1433` SPN (Service Principal Name) qeydiyyatı aparıldı və zəif şifrə təyin edildi.
-* **AS-REP Roasting Zəifliyi:** `svc_backup` hesabında `DoesNotRequirePreAuth` (`DONT_REQ_PREAUTH`, UAC bit `0x400000`) aktivləşdirildi.
+### Stage 3: Vulnerability Seeding & Configuration Weaknesses
+* **Kerberoasting Vector:** A Service Principal Name (`MSSQLSvc/APP01.corp.local:1433`) was mapped to user identity `svc_sql` with a weak, dictionary-crackable passphrase.
+* **AS-REP Roasting Vector:** Kerberos pre-authentication was explicitly disabled (`DoesNotRequirePreAuth` / `DONT_REQ_PREAUTH`, UAC bit `0x400000`) on account `svc_backup`.
 
-### Mərhələ 4: Kəşfiyyat və BloodHound Qraf Analizi
-* Kali Linux üzərindən LDAP/RPC kəşfiyyatı icra edildi.
-* SharpHound kollektoru vasitəsilə domen obyektləri və ACL əlaqələri çəkilərək BloodHound üzərində Domain Admin-ə aparan ən qısa hücum zənciri müəyyən edildi.
+### Stage 4: Reconnaissance & BloodHound Graph Relationship Mapping
+* Internal directory enumeration was conducted from Kali Linux via LDAP/RPC.
+* SharpHound collector was executed to ingest directory objects, session states, and Access Control Lists (ACLs) to map the shortest attack path to Domain Admin.
 
-### Mərhələ 5: Hücum Zəncirinin Tam İcrası və Nəticələrin Sənədləşdirilməsi
+### Stage 5: End-to-End Attack Chain Execution & Documentation
 ```
 [Initial User: jdoe] 
          ↓

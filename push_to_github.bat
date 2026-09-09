@@ -9,20 +9,20 @@ echo ================================================================
 echo  Active Directory Red Team Lab - Automatic GitHub Push
 echo ================================================================
 echo.
-echo Repozitoriya: https://github.com/ferecovilkin/active-directory-red-team-lab.git
+echo Repository: https://github.com/ferecovilkin/active-directory-red-team-lab.git
 echo.
 
 git remote remove origin 2>nul
 git remote add origin https://github.com/ferecovilkin/active-directory-red-team-lab.git
 git branch -M main
 
-echo Fayllar yoxlanilir...
+echo Checking files and staging changes...
 git add .
 git commit -m "feat: Active Directory Red Team Lab architecture, detections, and hardening" 2>nul
 
 echo.
-echo GitHub-a push edilir...
-echo (Eger brauzer penceresi acilsa, 'Sign in' / 'Authorize' duymesine klikleyin)
+echo Pushing changes to GitHub...
+echo (If a browser window opens, click 'Sign in' / 'Authorize')
 echo.
 
 git push -u origin main
@@ -30,11 +30,11 @@ git push -u origin main
 echo.
 if %errorlevel% equ 0 (
     echo ================================================================
-    echo  [UGURLU] Layihe ugurla GitHub-a push edildi!
+    echo  [SUCCESS] Project successfully pushed to GitHub!
     echo ================================================================
 ) else (
     echo ================================================================
-    echo  [MELUMAT] Autentifikasiya teleb oluna biler.
+    echo  [NOTICE] Authentication may be required.
     echo ================================================================
 )
 
