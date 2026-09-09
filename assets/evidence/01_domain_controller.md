@@ -1,7 +1,7 @@
 # Evidence 01: Domain Controller Provisioning (`DC01`)
 
 **Target Node:** `DC01.CORP.LOCAL` (Windows Server 2022)  
-**Assigned IP:** `10.0.0.5`  
+**Assigned IP:** `192.168.100.5`  
 **Role:** Primary Domain Controller, DNS Server, Kerberos KDC
 
 ---

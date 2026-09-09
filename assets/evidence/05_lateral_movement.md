@@ -1,7 +1,7 @@
 # Evidence 05: Lateral Movement to Member Server (`APP01`)
 
-**Source:** `WKSTN01.CORP.LOCAL` (10.0.20.15)  
-**Destination:** `APP01.CORP.LOCAL` (10.0.10.20)  
+**Source:** `WKSTN01.CORP.LOCAL` (192.168.100.15)  
+**Destination:** `APP01.CORP.LOCAL` (192.168.100.20)  
 **Authentication Material:** Acquired credentials for `svc_sql`  
 **Protocol:** Windows Remote Management (WinRM / TCP 5985)
 
@@ -25,7 +25,7 @@ SeChangeNotifyPrivilege       Bypass traverse checking       Enabled
 
 [APP01.corp.local]: PS C:\Users\svc_sql\Documents> hostname; ipconfig | findstr "IPv4"
 APP01
-   IPv4 Address. . . . . . . . . . . : 10.0.10.20
+   IPv4 Address. . . . . . . . . . . : 192.168.100.20
 ```
 
 ---

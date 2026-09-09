@@ -56,24 +56,24 @@ The objective of this assessment was to execute a structured, assumed-breach int
 
 ## 🗺️ VMware Lab Architecture & Topology
 
-The laboratory is hosted within an isolated virtual network (`VMnet2` / Host-Only) to ensure safe, controlled testing without external network leakage.
+The laboratory is hosted within an isolated virtual network (**NAT Network / `VMnet8` - `192.168.100.0/24`**) to ensure safe, controlled testing with internet access for package management while isolating domain traffic.
 
 ```
              ┌───────────────┐
              │     Kali      │
              │   RED TEAM    │
-             │  10.0.20.99   │
+             │192.168.100.99 │
              └───────┬───────┘
                      │
-              Internal Network (VMnet2 / 10.0.0.0/16)
+         NAT Network (VMnet8 / 192.168.100.0/24)
                      │
         ┌────────────┴────────────┐
         │                         │
  ┌──────▼──────┐           ┌──────▼──────┐
  │   WKSTN01   │           │    APP01    │
  │ Windows 11  │           │ Win Server  │
- │ 10.0.20.15  │           │ IIS / MSSQL │
- │ Domain User │           │ 10.0.10.20  │
+ │192.168.100.15│          │ IIS / MSSQL │
+ │ Domain User │           │192.168.100.20│
  └──────┬──────┘           └──────┬──────┘
         │                         │
         └────────────┬────────────┘
@@ -82,7 +82,7 @@ The laboratory is hosted within an isolated virtual network (`VMnet2` / Host-Onl
               │    DC01     │
               │ Domain Ctrl │
               │ CORP.LOCAL  │
-              │  10.0.0.5   │
+              │192.168.100.5 │
               └─────────────┘
 ```
 
@@ -90,10 +90,10 @@ The laboratory is hosted within an isolated virtual network (`VMnet2` / Host-Onl
 
 | Virtual Machine | Operating System | Network Adapter | IP Address | Configured Role / Context |
 |---|---|---|---|---|
-| **`KALI-NODE`** | Kali Linux 2024.x | Custom (VMnet2) | `10.0.20.99` | Red Team assessment host (BloodHound, Impacket, Hashcat) |
-| **`WKSTN01`** | Windows 11 Enterprise | Custom (VMnet2) | `10.0.20.15` | Domain member client; Initial breach foothold (`CORP\jdoe`) |
-| **`APP01`** | Windows Server 2022 | Custom (VMnet2) | `10.0.10.20` | Member server hosting IIS & MSSQL; Service account `svc_sql` |
-| **`DC01`** | Windows Server 2022 | Custom (VMnet2) | `10.0.0.5` | Primary Domain Controller; DNS, Kerberos KDC for `CORP.LOCAL` |
+| **`KALI-NODE`** | Kali Linux 2024.x | NAT (`VMnet8`) | `192.168.100.99` | Red Team assessment host (BloodHound, Impacket, Hashcat) |
+| **`WKSTN01`** | Windows 11 Enterprise | NAT (`VMnet8`) | `192.168.100.15` | Domain member client; Initial breach foothold (`CORP\jdoe`) |
+| **`APP01`** | Windows Server 2022 | NAT (`VMnet8`) | `192.168.100.20` | Member server hosting IIS & MSSQL; Service account `svc_sql` |
+| **`DC01`** | Windows Server 2022 | NAT (`VMnet8`) | `192.168.100.5` | Primary Domain Controller; DNS, Kerberos KDC for `CORP.LOCAL` |
 
 ---
 

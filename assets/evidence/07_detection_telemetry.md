@@ -23,7 +23,7 @@
     <Data Name="ServiceName">MSSQLSvc/APP01.corp.local:1433</Data>
     <Data Name="TicketOptions">0x40810000</Data>
     <Data Name="TicketEncryptionType">0x17</Data>
-    <Data Name="IpAddress">::ffff:10.0.20.15</Data>
+    <Data Name="IpAddress">::ffff:192.168.100.15</Data>
   </EventData>
 </Event>
 ```
