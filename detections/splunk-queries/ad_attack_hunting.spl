@@ -1,0 +1,64 @@
+```spl
+# ==============================================================================
+# Splunk Threat Hunting Queries - Active Directory Red Team Attack Path
+# Target Platform: Splunk Enterprise / Splunk Cloud with Windows TA
+# Author: Active Directory Lab Project (İlkin Fərəcov)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Kerberoasting Detection (Event ID 4769)
+# Detection Logic: Service Ticket requested with RC4 encryption (0x17) for non-machine accounts
+# Severity: High | MITRE: T1558.003
+# ------------------------------------------------------------------------------
+index=wineventlog EventCode=4769 Ticket_Encryption_Type="0x17" Ticket_Options="0x40810000"
+| where NOT match(Service_Name, ".*\\$$") AND Service_Name!="krbtgt"
+| stats count earliest(_time) as first_seen latest(_time) as last_seen values(Service_Name) as targeted_services by src_ip, TargetUserName
+| where count >= 1
+| convert ctime(first_seen) ctime(last_seen)
+| table first_seen, last_seen, src_ip, TargetUserName, targeted_services, count
+
+# ------------------------------------------------------------------------------
+# 2. AS-REP Roasting Detection (Event ID 4768)
+# Detection Logic: Kerberos TGT requested without pre-authentication (PreAuthType=0)
+# Severity: Medium/High | MITRE: T1558.004
+# ------------------------------------------------------------------------------
+index=wineventlog EventCode=4768 Pre_Authentication_Type="0"
+| where NOT match(TargetUserName, ".*\\$$")
+| stats count min(_time) as first_seen max(_time) as last_seen by src_ip, TargetUserName
+| convert ctime(first_seen) ctime(last_seen)
+| table first_seen, last_seen, src_ip, TargetUserName, count
+
+# ------------------------------------------------------------------------------
+# 3. Suspicious LSASS Process Access (Sysmon Event ID 10)
+# Detection Logic: Any non-standard process requesting read access to lsass.exe memory
+# Severity: Critical | MITRE: T1003.001
+# ------------------------------------------------------------------------------
+index=sysmon EventCode=10 TargetImage="*\\lsass.exe" GrantedAccess IN ("0x1010", "0x1038", "0x1410", "0x1fffff")
+| where NOT match(SourceImage, "(?i)\\\\(msmpeng\\.exe|svchost\\.exe|csrss\\.exe)$")
+| stats count by _time, host, SourceImage, TargetImage, GrantedAccess, CallTrace
+| sort -_time
+
+# ------------------------------------------------------------------------------
+# 4. Potential DCSync Execution (Event ID 4662)
+# Detection Logic: Non-DC computer/user accessing directory replication rights
+# Extended Rights GUIDs:
+#   DS-Replication-Get-Changes: 1131f6aa-9c07-11d1-f79f-00c04fc2dcd2
+#   DS-Replication-Get-Changes-All: 1131f6ad-9c07-11d1-f79f-00c04fc2dcd2
+# Severity: Critical | MITRE: T1003.006
+# ------------------------------------------------------------------------------
+index=wineventlog EventCode=4662 (AccessMask="0x100" OR AccessMask="0x10")
+| where (match(Properties, ".*1131f6aa-9c07-11d1-f79f-00c04fc2dcd2.*") OR match(Properties, ".*1131f6ad-9c07-11d1-f79f-00c04fc2dcd2.*"))
+| where NOT match(SubjectUserName, ".*\\$$")
+| table _time, host, SubjectUserName, ObjectName, Properties, AccessMask
+
+# ------------------------------------------------------------------------------
+# 5. BloodHound / SharpHound Mass LDAP Query Profiling (Event ID 1644)
+# Detection Logic: Rapid burst of directory searches filtering for all users/groups
+# Severity: Medium | MITRE: T1087.002 / T1069.002
+# ------------------------------------------------------------------------------
+index=wineventlog EventCode=1644
+| bucket _time span=5m
+| stats count values(Filter) as search_filters by _time, ClientIPAddress
+| where count > 50
+| sort -count
+```

@@ -1,0 +1,29 @@
+title: Potential DCSync Operation via Directory Replication Rights
+id: 3e82b793-7df6-48c3-8874-9549d443b715
+status: production
+description: Detects access to Active Directory domain objects with Directory Replication extended rights (DS-Replication-Get-Changes-All), indicative of DCSync attacks.
+references:
+  - https://attack.mitre.org/techniques/T1003/006/
+author: Active Directory Lab Project (İlkin Fərəcov)
+date: 2026/09/09
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4662
+    AccessMask:
+      - '0x100'
+      - '0x10'
+    Properties|contains:
+      - '1131f6aa-9c07-11d1-f79f-00c04fc2dcd2' # DS-Replication-Get-Changes
+      - '1131f6ad-9c07-11d1-f79f-00c04fc2dcd2' # DS-Replication-Get-Changes-All
+  filter_domain_controllers:
+    SubjectUserName|endswith: '$'
+  condition: selection and not filter_domain_controllers
+falsepositives:
+  - Authorized identity synchronization engines (e.g. Microsoft Entra Connect / Azure AD Connect sync accounts)
+level: critical
+tags:
+  - attack.credential_access
+  - attack.t1003.006

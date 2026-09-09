@@ -1,0 +1,43 @@
+<Sysmon schemaversion="4.90">
+  <!-- Active Directory Lab - Targeted Threat Telemetry Profile -->
+  <!-- Focus: LSASS protection, remote thread injection, and PowerShell anomaly detection -->
+  <HashAlgorithms>SHA256</HashAlgorithms>
+  <CheckRevocation/>
+  <EventFiltering>
+    <!-- Event ID 1: Process Creation -->
+    <RuleGroup name="ProcessCreation" groupRelation="or">
+      <ProcessCreate onmatch="include">
+        <Image condition="end with">\powershell.exe</Image>
+        <Image condition="end with">\pwsh.exe</Image>
+        <Image condition="end with">\cmd.exe</Image>
+        <Image condition="end with">\wmic.exe</Image>
+        <Image condition="end with">\rundll32.exe</Image>
+        <CommandLine condition="contains">-enc</CommandLine>
+        <CommandLine condition="contains">downloadstring</CommandLine>
+        <CommandLine condition="contains">bypass</CommandLine>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <!-- Event ID 8: CreateRemoteThread -->
+    <RuleGroup name="CreateRemoteThread" groupRelation="or">
+      <CreateRemoteThread onmatch="include">
+        <TargetImage condition="end with">\lsass.exe</TargetImage>
+        <TargetImage condition="end with">\svchost.exe</TargetImage>
+      </CreateRemoteThread>
+    </RuleGroup>
+
+    <!-- Event ID 10: ProcessAccess (Crucial for LSASS credential theft detection) -->
+    <RuleGroup name="ProcessAccess" groupRelation="or">
+      <ProcessAccess onmatch="include">
+        <TargetImage condition="end with">\lsass.exe</TargetImage>
+      </ProcessAccess>
+      <ProcessAccess onmatch="exclude">
+        <!-- Exclude known Windows internal components -->
+        <SourceImage condition="end with">\MsMpEng.exe</SourceImage>
+        <SourceImage condition="end with">\svchost.exe</SourceImage>
+        <SourceImage condition="end with">\csrss.exe</SourceImage>
+        <SourceImage condition="end with">\wininit.exe</SourceImage>
+      </ProcessAccess>
+    </RuleGroup>
+  </EventFiltering>
+</Sysmon>
