@@ -1,23 +1,23 @@
 <div align="center">
 
-# 🛡️ Enterprise Active Directory Red Team Lab
-### End-to-End Attack Path Simulation, Threat Hunting & Detection Engineering
+# ⚔️ Enterprise Active Directory Red Team & Penetration Testing Lab
+### End-to-End Attack Path Simulation, Kerberos Exploitation & Domain Compromise
 
-[![MITRE ATT&CK](https://img.shields.io/badge/MITRE%20ATT%26CK-v14.1-orange?style=for-the-badge&logo=shield)](https://attack.mitre.org/)
-[![Environment](https://img.shields.io/badge/Environment-Active%20Directory%20DS%20%7C%20Windows%20Server%202022-blue?style=for-the-badge&logo=windows)](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-domain-services)
-[![Telemetry](https://img.shields.io/badge/Telemetry-Sysmon%20%2B%20WEF%20%2B%20Splunk-green?style=for-the-badge&logo=splunk)](https://www.splunk.com)
-[![Detection](https://img.shields.io/badge/Detections-Sigma%20%7C%20KQL%20%7C%20SPL-purple?style=for-the-badge)](https://github.com/SigmaHQ/sigma)
+[![MITRE ATT&CK](https://img.shields.io/badge/MITRE%20ATT%26CK-Offensive%20Tactics-red?style=for-the-badge&logo=shield)](https://attack.mitre.org/)
+[![Assessment](https://img.shields.io/badge/Assessment-Internal%20Penetration%20Test-black?style=for-the-badge&logo=kali-linux)](playbooks/red-team-methodology.md)
+[![Report](https://img.shields.io/badge/Deliverable-Technical%20Pentest%20Report-darkblue?style=for-the-badge)](reports/AD_Penetration_Testing_Report.md)
+[![Lab](https://img.shields.io/badge/Target-Active%20Directory%20Forest%20(CORP.LOCAL)-blue?style=for-the-badge&logo=windows)](lab-architecture/topology.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 <br/>
 
-**A production-grade, enterprise-scale Active Directory cybersecurity laboratory designed to simulate modern adversary tradecraft, analyze identity-based attack vectors, and build high-fidelity Blue Team detections.**
+**A dedicated Active Directory penetration testing and adversary emulation laboratory documenting a complete attack path from initial unprivileged workstation foothold to full Domain Controller (Tier-0) compromise.**
 
-[Architecture Topology](#-lab-architecture--network-topology) •
+[Pentest Report](reports/AD_Penetration_Testing_Report.md) •
+[Red Team Playbook](playbooks/red-team-methodology.md) •
 [Attack Chain](#-simulated-attack-path--threat-emulation) •
-[Telemetry & Detections](#-detection-engineering--telemetry-matrix) •
-[Defensive Baseline Audit](#-defensive-auditing-tooling) •
-[Hardening Roadmap](#-enterprise-hardening--remediation-blueprint)
+[Lab Architecture](lab-architecture/topology.md) •
+[Detection & Telemetry](detections/)
 
 </div>
 
@@ -26,19 +26,28 @@
 ## 📑 Table of Contents
 
 - [Executive Summary](#-executive-summary)
-- [Lab Architecture & Network Topology](#-lab-architecture--network-topology)
-- [The MITRE ATT&CK Matrix Mapping](#-mitre-attck-matrix-mapping)
-- [Simulated Attack Path & Threat Emulation](#-simulated-attack-path--threat-emulation)
+- [Penetration Testing Deliverables](#-penetration-testing-deliverables)
+- [Lab Architecture & Target Environment](#-lab-architecture--network-topology)
+- [The Offensive MITRE ATT&CK Mapping](#-mitre-attck-matrix-mapping)
+- [Simulated Attack Path & Tradecraft Breakdown](#-simulated-attack-path--threat-emulation)
   - [Phase 1: Reconnaissance & LDAP Object Discovery](#phase-1-reconnaissance--ldap-object-discovery)
   - [Phase 2: Kerberos Abuse (AS-REP Roasting & Kerberoasting)](#phase-2-kerberos-abuse-as-rep-roasting--kerberoasting)
   - [Phase 3: Credential Access & Memory Architecture](#phase-3-credential-access--memory-architecture)
   - [Phase 4: Graph-Based Attack Path Mapping (BloodHound)](#phase-4-graph-based-attack-path-mapping-bloodhound)
   - [Phase 5: Lateral Movement & Domain Dominance (DCSync)](#phase-5-lateral-movement--domain-dominance-dcsync)
 - [Detection Engineering & Telemetry Matrix](#-detection-engineering--telemetry-matrix)
-- [Defensive Auditing Tooling](#-defensive-auditing-tooling)
-- [Enterprise Hardening & Remediation Blueprint](#-enterprise-hardening--remediation-blueprint)
+- [Remediation & Security Baseline Audit](#-defensive-auditing-tooling)
 - [Repository Structure](#-repository-structure)
-- [Author & Ethics Statement](#-author--ethics-statement)
+
+---
+
+## 📑 Penetration Testing Deliverables
+
+This repository contains full assessment documentation suitable for academic evaluations, internal security audits, and professional portfolio demonstration:
+
+1. 📄 [**Formal Penetration Testing Assessment Report (`reports/AD_Penetration_Testing_Report.md`)**](reports/AD_Penetration_Testing_Report.md) – Executive summary, vulnerability severity ratings (CVSS v3.1), affected assets, detailed technical findings, and risk analysis.
+2. ⚔️ [**Red Team Assessment Playbook (`playbooks/red-team-methodology.md`)**](playbooks/red-team-methodology.md) – Tactical offensive tradecraft from initial recon to DCSync forest dominance.
+
 
 ---
 
